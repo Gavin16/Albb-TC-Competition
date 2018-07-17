@@ -24,4 +24,3 @@ df_section[['User_id','Date_received']]
 
 
 
-
