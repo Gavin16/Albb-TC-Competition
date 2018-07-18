@@ -19,9 +19,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import log_loss, roc_auc_score, auc, roc_curve
 from sklearn.preprocessing import MinMaxScaler
 
-# import xgboost as xgb
-# import lightgbm as lgb
-
+import xgboost as xgb
+import lightgbm as lgb
 
 # dfoff = pd.read_csv('../../data/O2OCUF/ccf_offline_stage1_train.csv')
 dfoff = pd.read_csv('../../data/O2OCUF/ccf_offline_stage1_train.csv', na_values='NULL')
@@ -152,7 +151,7 @@ plt.legend()
 
 plt.subplot(212)
 plt.bar(date_received_dt, buybydate['count'] / couponbydate['count'])
-plt.ylabel('Ratio(coupon received/coupon used)')
+plt.ylabel('Ratio(coupon used/coupon received)')
 plt.tight_layout()
 plt.show()
 
@@ -203,5 +202,5 @@ dfoff['label'] = dfoff.apply(lable, axis=1)
 
 print(dfoff['label'].value_counts())
 
-
-
+# 保存处理后的数据
+dfoff.to_csv('../../data/runtimedata/dfoff1.csv', index=False)
