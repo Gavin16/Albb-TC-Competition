@@ -51,6 +51,8 @@ print(len(original_feature),original_feature)
 predictors = original_feature
 print(predictors)
 
+print(train.head())
+
 def check_model(data, predictors):
     classifier = lambda: SGDClassifier(
         loss='log',
@@ -77,7 +79,7 @@ def check_model(data, predictors):
         model,
         parameters,
         cv=folder,
-        n_jobs=-1,
+        n_jobs=1,
         verbose=1)
     grid_search = grid_search.fit(data[predictors],
                                   data['label'])
@@ -85,6 +87,7 @@ def check_model(data, predictors):
     return grid_search
 
 
+# 将模型序列化到文件中
 if not os.path.isfile('1_model.pkl'):
     model = check_model(train, predictors)
     print(model.best_score_)
@@ -92,6 +95,36 @@ if not os.path.isfile('1_model.pkl'):
     with open('1_model.pkl', 'wb') as f:
         pickle.dump(model, f)
 else:
+    # 训练集和验证集的划分是按固定的时间划分的,因此第一次训练好的模型之后可以直接用
     with open('1_model.pkl', 'rb') as f:
         model = pickle.load(f)
+
+#
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', 1000)
+
+y_valid_pred = model.predict_proba(valid[predictors])
+print(y_valid_pred)
+valid1 = valid.copy()
+#  y_valid_pred 作为预测结果, 第一列和第二列, 哪一列是正例的概率？
+valid1['pred_prob'] = y_valid_pred[:, 1]
+print(valid1.head(2))
+
+
+# 计算模型验证集的AUC
+vg = valid1.groupby(['Coupon_id'])
+aucs = []
+
+print(vg['Coupon_id'].value_counts())
+
+for i in vg:
+    tmpdf = i[1]
+    # print(tmpdf)
+    if len(tmpdf['label'].unique()) != 2:
+        continue
+    fpr,tpr,thresholds = roc_curve(tmpdf['label'],tmpdf['pred_prob'],pos_label=1)
+    aucs.append(auc(fpr,tpr))
+print(np.average(aucs))
+
+
 

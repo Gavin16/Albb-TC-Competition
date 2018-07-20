@@ -168,7 +168,7 @@ def getWeekday(feature):
 dfoff['weekday'] = dfoff['Date_received'].astype(str).apply(getWeekday)
 dftest['weekday'] = dftest['Date_received'].astype(str).apply(getWeekday)
 # 使用weekday_type 标记是否是周末 0 代表不是，1 代表是
-dfoff['weekdat_type'] = dfoff['weekday'].apply(lambda x: 1 if x in [6, 7] else 0)
+dfoff['weekday_type'] = dfoff['weekday'].apply(lambda x: 1 if x in [6, 7] else 0)
 dftest['weekday_type'] = dftest['weekday'].apply(lambda x: 1 if x in [6, 7] else 0)
 
 weekdaycols = ['weekday_' + str(i) for i in range(1, 8)]
@@ -204,3 +204,4 @@ print(dfoff['label'].value_counts())
 
 # 保存处理后的数据
 dfoff.to_csv('../../data/runtimedata/dfoff1.csv', index=False)
+

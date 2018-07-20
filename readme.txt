@@ -17,5 +17,10 @@ https://tianchi.aliyun.com/notebook/detail.html?spm=5176.8366600.0.0.5bd1311fZf6
     既然只有少数商家和少数顾客是测试数据中没有的,是否可考虑顾客的偏好？
 
 
+featureAnalysis.py 对数据集做特征分析
+moduleSelection.py 中使用随机梯度下降算法SGD 训练分类器
+validPrediction.py 中将训练得来的分类器 对验证集做验证
+
+
 
 
