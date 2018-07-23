@@ -198,6 +198,7 @@ def lable(row):
             return 1
     return 0
 
+
 dfoff['label'] = dfoff.apply(lable, axis=1)
 
 print(dfoff['label'].value_counts())
