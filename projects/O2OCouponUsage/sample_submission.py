@@ -22,8 +22,7 @@ import xgboost as xgb
 import lightgbm as lgb
 
 
-# 读取训练得到的模型
-with open('1_model.pkl','rb') as f:
-    model = pickle.load(f)
+# 读取测试数据集
+df_sub = pd.read_csv('../../data/O2OCUF/sample_submission.csv')
 
-
+#

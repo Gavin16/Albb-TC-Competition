@@ -337,50 +337,52 @@ for i in validgroup:
     aucs.append(auc(fpr, tpr))
 print(np.average(aucs))
 
-
 # 使用User 和 Merchant 联合特征值做分析
 um = fdf[['User_id', 'Merchant_id']].copy().drop_duplicates()
 
 um1 = fdf[['User_id', 'Merchant_id']].copy()
 um1['um_count'] = 1
-um1 = um1.groupby(['User_id', 'Merchant_id'], as_index = False).count()
+um1 = um1.groupby(['User_id', 'Merchant_id'], as_index=False).count()
 print(um1.head())
 
 um2 = fdf[fdf['Date'] != 'null'][['User_id', 'Merchant_id']].copy()
 um2['um_buy_count'] = 1
-um2 = um2.groupby(['User_id', 'Merchant_id'], as_index = False).count()
+um2 = um2.groupby(['User_id', 'Merchant_id'], as_index=False).count()
 print(um2.head())
 
 um3 = fdf[fdf['Date_received'] != 'null'][['User_id', 'Merchant_id']].copy()
 um3['um_coupon_count'] = 1
-um3 = um3.groupby(['User_id', 'Merchant_id'], as_index = False).count()
+um3 = um3.groupby(['User_id', 'Merchant_id'], as_index=False).count()
 print(um3.head())
 
 um4 = fdf[(fdf['Date_received'] != 'null') & (fdf['Date'] != 'null')][['User_id', 'Merchant_id']].copy()
 um4['um_buy_with_coupon'] = 1
-um4 = um4.groupby(['User_id', 'Merchant_id'], as_index = False).count()
+um4 = um4.groupby(['User_id', 'Merchant_id'], as_index=False).count()
 print(um4.head())
 
 # merge all user merchant
-user_merchant_feature = pd.merge(um, um1, on = ['User_id','Merchant_id'], how = 'left')
-user_merchant_feature = pd.merge(user_merchant_feature, um2, on = ['User_id','Merchant_id'], how = 'left')
-user_merchant_feature = pd.merge(user_merchant_feature, um3, on = ['User_id','Merchant_id'], how = 'left')
-user_merchant_feature = pd.merge(user_merchant_feature, um4, on = ['User_id','Merchant_id'], how = 'left')
+user_merchant_feature = pd.merge(um, um1, on=['User_id', 'Merchant_id'], how='left')
+user_merchant_feature = pd.merge(user_merchant_feature, um2, on=['User_id', 'Merchant_id'], how='left')
+user_merchant_feature = pd.merge(user_merchant_feature, um3, on=['User_id', 'Merchant_id'], how='left')
+user_merchant_feature = pd.merge(user_merchant_feature, um4, on=['User_id', 'Merchant_id'], how='left')
 user_merchant_feature = user_merchant_feature.fillna(0)
 
-user_merchant_feature['um_buy_rate'] = user_merchant_feature['um_buy_count'].astype('float')/user_merchant_feature['um_count'].astype('float')
-user_merchant_feature['um_coupon_use_rate'] = user_merchant_feature['um_buy_with_coupon'].astype('float')/user_merchant_feature['um_coupon_count'].astype('float')
-user_merchant_feature['um_buy_with_coupon_rate'] = user_merchant_feature['um_buy_with_coupon'].astype('float')/user_merchant_feature['um_buy_count'].astype('float')
+user_merchant_feature['um_buy_rate'] = user_merchant_feature['um_buy_count'].astype('float') / user_merchant_feature[
+    'um_count'].astype('float')
+user_merchant_feature['um_coupon_use_rate'] = user_merchant_feature['um_buy_with_coupon'].astype('float') / \
+                                              user_merchant_feature['um_coupon_count'].astype('float')
+user_merchant_feature['um_buy_with_coupon_rate'] = user_merchant_feature['um_buy_with_coupon'].astype('float') / \
+                                                   user_merchant_feature['um_buy_count'].astype('float')
 user_merchant_feature = user_merchant_feature.fillna(0)
 user_merchant_feature.head()
 
-data4 = pd.merge(data3, user_merchant_feature, on = ['User_id','Merchant_id'], how = 'left').fillna(0)
-train, valid = train_test_split(data4, test_size = 0.2, stratify = data4['label'], random_state=100)
+data4 = pd.merge(data3, user_merchant_feature, on=['User_id', 'Merchant_id'], how='left').fillna(0)
+train, valid = train_test_split(data4, test_size=0.2, stratify=data4['label'], random_state=100)
 
 predictors = original_feature + user_feature.columns.tolist()[1:] + \
              merchant_feature.columns.tolist()[1:] + \
              user_merchant_feature.columns.tolist()[2:]
-print(len(predictors),predictors)
+print(len(predictors), predictors)
 
 if not os.path.isfile('4_model.pkl'):
     model = check_model(train, predictors)
@@ -393,7 +395,7 @@ else:
         model = pickle.load(f)
 
 valid4 = valid.copy()
-valid4['pred_prob'] = model.predict_proba(valid4[predictors])[:,1]
+valid4['pred_prob'] = model.predict_proba(valid4[predictors])[:, 1]
 validgroup = valid4.groupby(['Coupon_id'])
 
 aucs = []
@@ -404,3 +406,14 @@ for i in validgroup:
     fpr, tpr, thresholds = roc_curve(tmpdf['label'], tmpdf['pred_prob'], pos_label=1)
     aucs.append(auc(fpr, tpr))
 print(np.average(aucs))
+
+# 使用模型4来预测提交数据
+df_sub = pd.read_csv('../../data/O2OCUF/sample_submission.csv')
+
+with open('4_model.pkl', 'rb') as f:
+    model = pickle.load(f)
+
+
+
+
+

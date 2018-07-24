@@ -2,7 +2,7 @@
 
 import pandas as pd
 
-df = pd.read_csv('../../data/O2OCUF/ccf_offline_stage1_train.csv')
+df_sub = pd.read_csv('../../data/O2OCUF/sample_submission.csv')
 
 # dtypes
 # print(df.dtypes)
@@ -10,10 +10,12 @@ df = pd.read_csv('../../data/O2OCUF/ccf_offline_stage1_train.csv')
 # transpose
 # print(df.transpose)
 
-df_section = df[0:30]
+# df_section = df[0:30]
 # print(df_section)
 # df_section.to_csv()
-df_section[['User_id','Date_received']]
+# df_section[['User_id','Date_received']]
+
+
 
 
 
