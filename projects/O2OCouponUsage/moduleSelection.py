@@ -407,13 +407,5 @@ for i in validgroup:
     aucs.append(auc(fpr, tpr))
 print(np.average(aucs))
 
-# 使用模型4来预测提交数据
-df_sub = pd.read_csv('../../data/O2OCUF/sample_submission.csv')
-
-with open('4_model.pkl', 'rb') as f:
-    model = pickle.load(f)
-
-
-
 
 

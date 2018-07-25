@@ -1,6 +1,7 @@
 # -*-coding:utf-8-*-
 import pandas as pd
 import numpy as np
+from datetime import date
 
 def userFeature(df):
     u = df[['User_id']].copy().drop_duplicates()
@@ -160,3 +161,94 @@ def featureProcess(feature, train, test):
     test = pd.merge(test, user_merchant_feature, on=['User_id', 'Merchant_id'], how='left')
     test = test.fillna(0)
     return train, test
+
+
+
+def getDiscountType(row):
+    if ':' in row:
+        return 1
+    elif '.' in row:
+        return 0
+    else:
+        return 'null'
+
+
+# 获取优惠券的折扣[0,1.0]
+def getDiscountRate(row):
+    if ':' in row:
+        rows = row.split(':')
+        dis_rate = 1 - float(rows[1]) / float(rows[0])
+        return dis_rate
+    elif '.' in row:
+        return float(row)
+    else:
+        return 1.0
+
+# 获取优惠券需要购满的金额
+def getDiscountMan(row):
+    if ':' in row:
+        rows = row.split(':')
+        return int(rows[0])
+    else:
+        return 0
+
+
+# 获取购满该金额后优惠金额
+def getDiscountJian(row):
+    if ':' in row:
+        rows = row.split(':')
+        return int(rows[1])
+    else:
+        return 0
+
+
+# 对读取的dataFrame做处理
+def processData(df):
+    df['discount_type'] = df['Discount_rate'].apply(getDiscountType)
+    df['discount_rate'] = df['Discount_rate'].apply(getDiscountRate)
+    df['discount_man'] = df['Discount_rate'].apply(getDiscountMan)
+    df['discount_jian'] = df['Discount_rate'].apply(getDiscountJian)
+
+    print(df['discount_rate'].unique())
+
+    df['distance'] = df['Distance'].replace('null', -1).astype(int)
+    print(df['distance'].unique())
+    return df
+
+
+## 日期转化为星期
+def getWeekday(feature):
+    if feature == 'null':
+        return feature
+    else:
+        return date(int(feature[0:4]), int(feature[4:6]), int(feature[6:8])).weekday() + 1
+
+# 对读取的dataFrame做处理
+def addDiscountFeature(df):
+    df['discount_type'] = df['Discount_rate'].apply(getDiscountType)
+    df['discount_rate'] = df['Discount_rate'].apply(getDiscountRate)
+    df['discount_man'] = df['Discount_rate'].apply(getDiscountMan)
+    df['discount_jian'] = df['Discount_rate'].apply(getDiscountJian)
+
+    print(df['discount_rate'].unique())
+
+    df['distance'] = df['Distance'].replace('null', -1).astype(int)
+    print(df['distance'].unique())
+    return df
+
+# 增加星期特征
+def addWeekdayFeature(df):
+    # datafram 中日优惠券领取时间转星期
+    df['weekday'] = df['Date_received'].astype(str).apply(getWeekday)
+    # 使用weekday_type 标记是否是周末 0 代表不是，1 代表是
+    df['weekday_type'] = df['weekday'].apply(lambda x: 1 if x in [6, 7] else 0)
+    weekdaycols = ['weekday_' + str(i) for i in range(1, 8)]
+    # 将weekday按weekday_1,weekday_2 … weekday_7 字段展示字段为1代表weekday字段就取的该值
+    tmpdf = pd.get_dummies(df['weekday'].replace('null', np.nan))
+    tmpdf.columns = weekdaycols
+    df[weekdaycols] = tmpdf
+    return df
+
+
+
+
