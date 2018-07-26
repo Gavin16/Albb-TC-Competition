@@ -210,3 +210,28 @@ print(df['grade'])
 
 df['grade'].cat.categories = ['very good','good','very bad']
 print(df['grade'])
+
+
+# sort value
+df1 = df.sort_values(by='grade')
+print(df1)
+
+# group by a categorical column
+print(df.groupby("grade").size())
+print(df.groupby('grade').size())
+
+
+
+## use Series to plot figure
+ts = pd.Series(np.random.randn(1000), index=pd.date_range('1/1/2000',periods=1000))
+print(ts)
+ts = ts.cumsum()
+print(ts)
+ts.plot()
+
+
+
+
+
+
+

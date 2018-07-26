@@ -62,3 +62,8 @@ dsub_final['Probability'] = model.predict_proba(dsub3[predictors])[:,1]
 
 dsub_submit = dsub_final[['User_id','Coupon_id','Date_received','Probability']]
 dsub_submit.to_csv('result_sub1.csv',index=False)
+
+
+
+
+

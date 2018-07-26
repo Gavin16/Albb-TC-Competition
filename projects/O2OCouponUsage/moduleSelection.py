@@ -135,6 +135,7 @@ print(np.average(aucs))
 # 20160101 到20160515之间的数据提取特征，20160516 - 20160615的数据作为训练集
 feature = dfoff[
     (dfoff['Date'] < '20160516') | ((dfoff['Date'] == 'null') & (dfoff['Date_received'] < '20160516'))].copy()
+
 data = dfoff[(dfoff['Date_received'] >= '20160516') & (dfoff['Date_received'] <= '20160615')].copy()
 print(data['label'].value_counts())
 
