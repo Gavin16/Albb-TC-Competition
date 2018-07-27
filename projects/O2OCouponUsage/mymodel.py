@@ -110,6 +110,7 @@ def addDiscountFeatures(df):
     df['discount_expire'] = df['Discount_rate'].apply(getDiscountExpire)
     df['discount_amount'] = df['Discount_rate'].apply(getDiscountAmount)
     df['discount_rate'] = df['Discount_rate'].apply(getDiscountRate)
+    df['distance'] = df['Distance'].replace('null',-1).astype(int)
     return df
 
 
@@ -141,11 +142,10 @@ def label(row):
         return -1
     if row['Date'] != 'null':
         #若领取优惠券且也已消费,则判断消费时间是否在领券后的15天以内
-        td = pd.to_datetime(row['Date'],format='%Y%m%d') - pd.to_datetime(row['Date_received'])
-        if td < pd.Timedelta(15,'D'):
+        td = pd.to_datetime(row['Date'],format='%Y%m%d') - pd.to_datetime(row['Date_received'],format='%Y%m%d')
+        if td <= pd.Timedelta(15,'D'):
             return 1
-    else:
-        return 0
+    return 0
 
 def addLabel(df):
     df['label'] = df.apply(label,axis=1)
@@ -177,7 +177,7 @@ data_tv = pd.merge(data_tv,merchantfeature,how='left',on='Merchant_id')
 data_tv = pd.merge(data_tv,usermerchantFeature,how='left',on=['User_id','Merchant_id'])
 
 # data 划分成训练集 + 验证集
-data = train_test_split(data_tv,stratify=data_tv['label'],random_state=100)
+train,valid = train_test_split(data_tv,stratify=data_tv['label'],random_state=100)
 
 
 
