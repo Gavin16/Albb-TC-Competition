@@ -20,7 +20,9 @@ feature=data.drop('label',axis=1)
 feature=scaler.fit_transform(data)
 
 cluster=AgglomerativeClustering(n_clusters=2,affinity='euclidean')#affinity 度量方式
+#K均值聚类
 cluster=KMeans(n_clusters=2,init='k-means++',n_init=200,precompute_distances=True,n_jobs=-1)
+#密度聚类
 cluster=DBSCAN(algorithm='kd_tree',n_jobs=-1)
 cluster.fit(feature)
 pred=cluster.fit_predict(feature)
