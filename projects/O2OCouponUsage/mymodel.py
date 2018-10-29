@@ -155,7 +155,7 @@ train_df = addLabel(train_df)
 train_df = addDiscountFeatures(train_df)
 train_df = addWeekdayFeature(train_df)
 print(train_df.head(20))
-
+weekday_cols = ['weekday_'+ str(i) for i in range(1,8)]
 ####  提取用户特征,商户特征,用户商户组合特征以及用户优惠券组合特征
 ####  从用户或者商户历史数据中统计
 ## 将训练集划分为feature 和 data两部分， feature部分用来提取用户特征,商户特征以及用户商户联合特征
@@ -176,6 +176,11 @@ data_tv = pd.merge(data,userfeature,how='left',on='User_id')
 data_tv = pd.merge(data_tv,merchantfeature,how='left',on='Merchant_id')
 data_tv = pd.merge(data_tv,usermerchantFeature,how='left',on=['User_id','Merchant_id'])
 
+print(data_tv.head(20))
+
+original_cols = ['discount_type','discount_expire','discount_amount','discount_rate','distance','weekday','weekday_type']\
+                + weekday_cols
+
 # data 划分成训练集 + 验证集
 train,valid = train_test_split(data_tv,stratify=data_tv['label'],random_state=100)
 
@@ -185,10 +190,7 @@ train,valid = train_test_split(data_tv,stratify=data_tv['label'],random_state=10
 
 
 
-
-
-
-
+predictors = original_cols + userfeature.columns.tolist()[1:]
 
 
 

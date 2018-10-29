@@ -100,3 +100,5 @@ reg=LGBMRegressor(random_state=0,num_leaves=40,max_depth=7,n_estimators=200,subs
 reg.fit(X_train,y_train)
 y_pred_lgb=reg.predict(X_test)
 metrics.mean_squared_error(y_test,y_pred_lgb)
+
+

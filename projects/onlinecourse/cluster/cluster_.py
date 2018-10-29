@@ -4,6 +4,7 @@ Created on Wed Nov  8 23:46:40 2017
 
 @author: BRYAN
 """
+## 聚类一般使用两种：Kmeans 和 dbscan 如果形状不规则采用dbscan 若形状规则则采用kmeans
 
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import KMeans
@@ -17,7 +18,7 @@ path='d:/trainCG.csv'
 data=pd.read_csv(path).fillna(0)
 label=data.label
 feature=data.drop('label',axis=1)
-feature=scaler.fit_transform(data)
+feature=scaler.fit_transform(feature)
 
 cluster=AgglomerativeClustering(n_clusters=2,affinity='euclidean')#affinity 度量方式
 #K均值聚类
@@ -32,3 +33,5 @@ def f(x):
 pred=[i for i in map(f,pred)]
 print(accuracy_score(label,pred))
 
+
+pd.set_option()

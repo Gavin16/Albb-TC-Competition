@@ -67,12 +67,13 @@ model = xgb.train(params,dtrain,num_boost_round=100,evals=watchlist)
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.1, random_state=0)
 
 
+
 '''
 使用minepy做特征选择
-'''
 from minepy import MINE
 m = MINE()
 m.compute_score(X_train['merchant_max_distance'],y)
+'''
 
 
 from sklearn.ensemble import RandomForestClassifier
@@ -138,6 +139,9 @@ X_test=X_test[[i for i in columns if i not in delete_feature]]
 lr=LogisticRegression(penalty='l1',random_state=0,n_jobs=-1).fit(X_train,y_train)
 pred=lr.predict_proba(X_test)[:,1]
 print(roc_auc_score(y_test,pred))
+
+
+
 
 
 '''
